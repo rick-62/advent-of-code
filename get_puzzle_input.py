@@ -24,7 +24,7 @@ def save_puzzle_input(text, day, year):
 
 if __name__ == '__main__':
 
-    day = int(sys.argv[1])
-    year = int(sys.argv[2])
+    day, year = int(sys.argv[1]), int(sys.argv[2])
+    
     r = download_puzzle_input(day, year)
     save_puzzle_input(r.text, day, year)
