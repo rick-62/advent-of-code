@@ -64,11 +64,32 @@ class TestString:
             ('xyxy', True), 
             ('aabcdefgaa', True),
             ('jchzalrnumimnmhp', False),
+            ('jcchzalrnumimnmhp', False),
+            ('jcchzalrnuccmimnmhp', True),
+            ('aaa', False),
+            ('aaaaa', True),
+            ('aaaa', True),
         ]
     )
     def test_contains_repeating_pair(self, s, ans):
         string = day05.String(s)
-        assert string.naughty_or_nice() == ans
+        assert string.contains_repeating_pair() == ans
 
 
-
+    @pytest.mark.parametrize(
+        's, ans', [
+            ('xyxy', True), 
+            ('aabcdefgaa', False),
+            ('jchzalrnumimnmhp', True),
+            ('jcchzalrnumimnmhp', True),
+            ('jcchzalrnuccmimnmhp', True),
+            ('aaa', True),
+            ('aaaaa', True),
+            ('aaaa', True),
+            ('abcdefeghi', True)
+        ]
+    )
+    def test_contains_repeated_letter(self, s, ans):
+        string = day05.String(s)
+        assert string.contains_repeated_letter() == ans
+        

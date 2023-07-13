@@ -34,7 +34,30 @@ class String:
     ## PART 2 ##
 
     def contains_repeating_pair(self):
-        pass
+        '''
+        contains a pair of any two letters that appears at least twice in the string
+        without overlapping
+        '''
+        if len(self.s) < 4:
+            return False
+
+        for i in range(0, len(self.s) - 2):
+            pair = self.s[i:i+2]
+            if pair in self.s[i+2:]:
+                return True
+        else:
+            return False
+
+    def contains_repeated_letter(self):
+        '''contains at least one letter which repeats with exactly one letter between them'''
+        if len(self.s) < 3:
+            return False
+
+        for i in range(0, len(self.s) - 2):
+            if self.s[i] == self.s[i+2]:
+                return True
+        else:
+            return False
 
 
 
@@ -49,7 +72,13 @@ def part1():
     return sum(strings)
 
 def part2():
-    pass
+    '''count the number of nice strings, based on new parameters'''
+    total = 0
+    for string in create_input():
+        s = String(string)
+        if s.contains_repeating_pair() and s.contains_repeated_letter():
+            total += 1
+    return total
 
 
 if __name__ == '__main__':
