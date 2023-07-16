@@ -34,8 +34,22 @@ class Lights:
             instruction.y2,
         )
 
-    
-        
+
+class AdvancedLights(Lights):
+
+    def __init__(self):
+        super().__init__()
+        self.arr: np.ndarray = np.zeros((1000, 1000), dtype=np.int32)
+
+    def fn_on(self, x1, y1, x2, y2):
+        self.arr[x1:x2, y1:y2] += 1
+
+    def fn_off(self, x1, y1, x2, y2):
+        self.arr[x1:x2, y1:y2] = np.maximum(self.arr[x1:x2, y1:y2] - 1, 0)
+
+    def fn_toggle(self, x1, y1, x2, y2):
+        self.arr[x1:x2, y1:y2] += 2
+
 
 def create_input():
     '''
@@ -59,10 +73,8 @@ def create_input():
     
     return instructions
 
-
-
 def part1():
-    '''return the number of lit lights after following instructions'''
+    '''returns the number of lit lights after following instructions'''
     instructions = create_input()
     lights = Lights()
     for instruction in instructions:
@@ -70,8 +82,12 @@ def part1():
     return lights.arr.sum()
     
 def part2():
-    '''  '''
-    pass
+    '''returns the sum of light brightnesses after following instructions, with advanced rules'''
+    instructions = create_input()
+    lights = AdvancedLights()
+    for instruction in instructions:
+        lights.apply(instruction)
+    return lights.arr.sum()
 
 
 if __name__ == '__main__':

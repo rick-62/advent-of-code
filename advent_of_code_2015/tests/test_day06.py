@@ -47,6 +47,37 @@ class TestLights:
         assert lights.arr.sum() == 1_000_000
 
 
+class TestAdvancedLights:
+
+    def test_fn_on_off_toggle(self):
+        lights = day06.AdvancedLights()
+
+        # lights off
+        lights.fn_off(0, 0, 10, 10)
+        assert lights.arr[5,5] == 0
+
+        # lights on
+        lights.fn_on(0, 0, 10, 10)
+        assert lights.arr[5,5] == 1
+
+        # lights on (again)
+        lights.fn_on(0, 0, 10, 10)
+        assert lights.arr[5,5] == 2
+
+        # toggle lights
+        lights.fn_toggle(0, 0, 10, 10)
+        assert lights.arr[5,5] == 4
+
+        # lights off (again)
+        lights.fn_off(0, 0, 10, 10)
+        assert lights.arr[5,5] == 3
+    
+    def test_range(self):
+        lights = day06.AdvancedLights()
+        lights.fn_toggle(0, 0, 1000, 1000)
+        assert lights.arr.sum() == 2_000_000
+
+
 @pytest.mark.parametrize(
     's, i, x1, y1, x2, y2', [
         ('turn on 0,0 through 999,999', 'turn on', 0, 0, 999, 999), 
