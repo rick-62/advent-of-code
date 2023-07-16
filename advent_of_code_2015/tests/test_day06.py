@@ -1,4 +1,5 @@
-from unittest.mock import patch, mock_open
+from collections import namedtuple
+from unittest.mock import mock_open, patch
 
 import pytest
 from solutions import day06
@@ -11,6 +12,39 @@ class TestLights:
         assert lights.arr[0,0] == 0
         assert lights.arr[999,999] == 0
         assert lights.arr.shape == (1000,1000)
+
+    def test_fn_on_off_toggle(self):
+        lights = day06.Lights()
+
+        # lights on
+        lights.fn_on(5, 5, 10, 10)
+        assert lights.arr[55,55] == 0
+        assert lights.arr[5,5] == 1
+        assert lights.arr[6,9] == 1
+
+        # lights off
+        lights.fn_off(0, 0, 7, 8)
+        assert lights.arr[5,5] == 0
+        assert lights.arr[6,7] == 0
+
+        # toggle lights
+        lights.fn_toggle(0, 0, 7, 8)
+        assert lights.arr[5,5] == 1
+        assert lights.arr[6,7] == 1
+        assert lights.arr[0,0] == 1
+        assert lights.arr[55,55] == 0
+
+    def test_apply(self):
+        lights = day06.Lights()
+        Instruction = namedtuple("Instruction", ["instruction", "x1", "y1", "x2", "y2"])
+        lights.apply(Instruction(instruction='turn on', x1=0, y1=0, x2=10, y2=10))
+        assert lights.arr[0,9] == 1
+        assert lights.arr[11,11] == 0
+
+    def test_range(self):
+        lights = day06.Lights()
+        lights.fn_on(0, 0, 1000, 1000)
+        assert lights.arr.sum() == 1_000_000
 
 
 @pytest.mark.parametrize(
@@ -26,8 +60,8 @@ def test_create_input(s, i, x1, y1, x2, y2):
         assert returns[0].instruction == i
         assert returns[0].x1 == x1
         assert returns[0].y1 == y1
-        assert returns[0].x2 == x2
-        assert returns[0].y2 == y2
+        assert returns[0].x2 == x2 + 1
+        assert returns[0].y2 == y2 + 1
 
 
 

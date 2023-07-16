@@ -9,18 +9,33 @@ from helper import load_input
 
 class Lights:
 
-    fn_lookup: dict={
-        # complete me
-    }
-
     def __init__(self):
         self.arr: np.ndarray = np.zeros((1000, 1000), dtype=bool)
+        self.fn_lookup: dict={
+            'turn on': self.fn_on,
+            'turn off': self.fn_off,
+            'toggle': self.fn_toggle
+        }
+
+    def fn_on(self, x1, y1, x2, y2):
+        self.arr[x1:x2, y1:y2] = 1
+
+    def fn_off(self, x1, y1, x2, y2):
+        self.arr[x1:x2, y1:y2] = 0
+
+    def fn_toggle(self, x1, y1, x2, y2):
+        self.arr[x1:x2, y1:y2] = ~self.arr[x1:x2, y1:y2]
     
-    def apply(self, instruction):
-        # complete me
-        pass
+    def apply(self, instruction: namedtuple):
+        self.fn_lookup[instruction.instruction](
+            instruction.x1,
+            instruction.y1,
+            instruction.x2,
+            instruction.y2,
+        )
 
-
+    
+        
 
 def create_input():
     '''
@@ -38,8 +53,8 @@ def create_input():
                 instruction=match.group(1), 
                 x1=int(match.group(2)), 
                 y1=int(match.group(3)), 
-                x2=int(match.group(4)), 
-                y2=int(match.group(5))
+                x2=int(match.group(4)) + 1, 
+                y2=int(match.group(5)) + 1,
             ))
     
     return instructions
@@ -48,9 +63,12 @@ def create_input():
 
 def part1():
     '''return the number of lit lights after following instructions'''
-    # loop through instructions and apply to lights
-    pass
-
+    instructions = create_input()
+    lights = Lights()
+    for instruction in instructions:
+        lights.apply(instruction)
+    return lights.arr.sum()
+    
 def part2():
     '''  '''
     pass
