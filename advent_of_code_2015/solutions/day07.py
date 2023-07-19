@@ -25,61 +25,61 @@ def create_input():
     and returning a dictionary with list of input intructions/coordinates
     '''
     pattern = re.compile(r"""
-
-        # first arguments either number, variable or NOT operator
-        ^(\d+)?\s*(NOT)?\s*(\w+)?  
-
-        # AND/OR/LSHIFT/RSHIFT followed by number or string
-        \s*(AND|OR|LSHIFT|RSHIFT)?\s*(\w+)?
-        
-        # assignment to variable
-        \s*->?\s*(\w+)?$
-
+        ^(?P<X>\w+)?\s*(?P<op>NOT|AND|OR|LSHIFT|RSHIFT)?\s*(?P<Y>\w+)?\s*->\s*(?P<Z>\w+)?$
     """, re.VERBOSE)
 
     operations = {}
     for line in load_input(day=7).readlines():
         match = re.match(pattern, line)
         if match:
-            X1, op1, X2, op2, Y1, Z = match.groups()
+            X = match.group('X')
+            op = match.group('op')
+            Y = match.group('Y')
+            Z = match.group('Z')
+            print(op)
             operations[Z] = [
-                coalesce(op1, op2, 'ASSIGN'),
-                coalesce(X1, X2),
-                Y1
+                coalesce(op, 'ASSIGN'),
+                coalesce(X, Y),
+                Y
             ]
     
     return operations
 
 
-@cache
-def resolve(wire):
+def resolve(wire, operations={}):
 
-    if isinstance(wire, int):
-        return wire
-    
-    if wire.isnumeric():
-        return int(wire)   
+    @cache
+    def _resolve(wire):
 
-    op, X, Y = operations[wire]
-    print(op)
-    if op in ['NOT', 'ASSIGN']:
-        return LOOKUP[op](resolve(X))
-    else:
-        return LOOKUP[op](resolve(X), resolve(Y))
+        if isinstance(wire, int):
+            return wire
+        
+        if wire.isnumeric():
+            return int(wire)   
 
-    
+        op, X, Y = operations[wire]
 
-    
+        if op in ['NOT', 'ASSIGN']:
+            return LOOKUP[op](_resolve(X))
+        else:
+            return LOOKUP[op](_resolve(X), _resolve(Y))
+
+    _resolve.cache_clear()
+
+    return _resolve(wire)
 
 
 def part1():
     '''given the input operations, returns the signal ultimately provided to wire a'''
-    op = Operation()
-    for operation in create_input():
-        op.apply(operation)
-    return op.a
 
-    # ctypes.c_uint16(Z)
+    # possible fixes to get correct answer:
+        # apply uint16 to every input/output
+        # print all operations
+        # test direct on input rather than test
+
+
+    a = ctypes.c_uint16(resolve('a', create_input()))
+    return a.value
     
 def part2():
     ''' '''

@@ -24,6 +24,11 @@ def test_lookup():
         ('y RSHIFT 2 -> g', 'RSHIFT', 'y', '2', 'g'),  
         ('NOT x -> h', 'NOT', 'x', None, 'h'),  
         ('NOT y -> i', 'NOT', 'y', None, 'i'),  
+        ('gk AND gq -> gs', 'AND', 'gk', 'gq', 'gs'),  
+        ('1 AND gd -> ge', 'AND', '1', 'gd', 'ge'),  
+        ('NOT y -> i', 'NOT', 'y', None, 'i'),  
+        ('NOT y -> i', 'NOT', 'y', None, 'i'),  
+        ('NOT y -> i', 'NOT', 'y', None, 'i'),  
     ]
 )
 def test_create_input(s, op, X, Y, Z):
@@ -38,33 +43,33 @@ def test_resolve():
     assert day07.resolve('123') == 123
 
     # basic operation
-    day07.operations={
+    operations={
         'a': ['AND', 1, 2]
     }
-    assert day07.resolve('a') == 0
+    assert day07.resolve('a', operations) == 0
 
     # recurse
-    day07.operations={
-        'a': ['AND', '1', 'b'],
-        'b': ['LSHIFT', '1', '1'],
+    operations={
+        'b': ['AND', '1', 'c'],
+        'c': ['LSHIFT', '1', '1'],
     }
-    assert day07.resolve('a') == 0
+    assert day07.resolve('b', operations) == 0
 
-    # NOT operation - perk of pytest causing issues
-    del day07.operations
-    day07.operations={
-        'a': ['NOT', '7', None],
+    # NOT operation
+    operations={
+        'd': ['NOT', '7', None],
     }
-    assert day07.resolve('a') == -8
+    assert day07.resolve('d', operations) == -8
 
     # AND/LSHIFT/ASSIGN/NOT operations
-    day07.operations={
-        'a': ['AND', '1', 'b'],
-        'b': ['LSHIFT', 'c', '1'],
-        'c': ['ASSIGN', 'd', None],
-        'd': ['NOT', '66000', None]
+    operations={
+        'e': ['AND', '1', 'f'],
+        'f': ['LSHIFT', 'g', '1'],
+        'g': ['ASSIGN', 'h', None],
+        'h': ['NOT', '66000', None]
     }
-    assert day07.resolve('a') == 0
-    assert day07.resolve('b') == -132002
+    assert day07.resolve('e', operations) == 0
+    assert day07.resolve('f', operations) == -132002
+
 
     
