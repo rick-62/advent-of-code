@@ -1,8 +1,6 @@
 import ctypes
 import operator
 import re
-from collections import namedtuple
-from dataclasses import dataclass
 from functools import cache
 
 from helper import coalesce, load_input
@@ -25,28 +23,28 @@ def create_input():
     and returning a dictionary with list of input intructions/coordinates
     '''
     pattern = re.compile(r"""
-        ^(?P<X>\w+)?\s*(?P<op>NOT|AND|OR|LSHIFT|RSHIFT)?\s*(?P<Y>\w+)?\s*->\s*(?P<Z>\w+)?$
+        ^(?P<X>\w+)*?\s*(?P<op>NOT|AND|OR|LSHIFT|RSHIFT)?\s*(?P<Y>\w+)?\s*->\s*(?P<Z>\w+)?$
     """, re.VERBOSE)
 
     operations = {}
     for line in load_input(day=7).readlines():
         match = re.match(pattern, line)
         if match:
-            X = match.group('X')
             op = match.group('op')
+            X = match.group('X')
             Y = match.group('Y')
             Z = match.group('Z')
-            print(op)
             operations[Z] = [
                 coalesce(op, 'ASSIGN'),
                 coalesce(X, Y),
-                Y
+                Y if X else None
             ]
     
     return operations
 
 
 def resolve(wire, operations={}):
+    '''Recursively resolves wires'''
 
     @cache
     def _resolve(wire):
@@ -70,20 +68,25 @@ def resolve(wire, operations={}):
 
 
 def part1():
-    '''given the input operations, returns the signal ultimately provided to wire a'''
-
-    # possible fixes to get correct answer:
-        # apply uint16 to every input/output
-        # print all operations
-        # test direct on input rather than test
-
-
+    '''Given the input operations, returns the signal ultimately provided to wire a'''
     a = ctypes.c_uint16(resolve('a', create_input()))
     return a.value
     
+
 def part2():
-    ''' '''
-    pass
+    '''Injects original value of a into wire b and resolves wire a again'''
+
+    # resolves wire a
+    operations = create_input()
+    a = ctypes.c_uint16(resolve('a', operations))
+
+    # overwrites wire b with the value of wire a
+    operations['b'] = ['ASSIGN', a.value, None]
+
+    # resolves wire a again
+    a = ctypes.c_uint16(resolve('a', operations))
+
+    return a.value
 
 
 if __name__ == '__main__':
