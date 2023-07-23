@@ -28,7 +28,7 @@ def encode_string(s):
 
 def create_input():
     '''Extract puzzle input'''
-    return load_input(day=8).read().splitlines()
+    return load_input(day=8, encoding='ascii').read().splitlines()
 
 
 def part1():

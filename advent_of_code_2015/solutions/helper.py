@@ -1,11 +1,11 @@
 import os
 
-def load_input(day, encoding="ascii"):
+def load_input(day, **kwargs):
     '''load pre-downloaded puzzle input for specified day'''
 
     return open(
         os.path.join('advent_of_code_2015', 'inputs', f'day{day:0>2}.txt'), 
-        encoding=encoding
+        **kwargs
     )
 
 def coalesce(*args):
