@@ -4,29 +4,41 @@ import pytest
 from solutions import day08
 
 
-def test_lookup():
-    pass
+@pytest.mark.parametrize(
+    'string, length', [
+        (r'""', 2),  
+        (r'"abc"', 5),  
+        (r'"aaa\"aaa"', 10),  
+        (r'"\x27"', 6),  
+    ]
+)
+def test_create_input(string, length):
+    with patch('builtins.open', mock_open(read_data=string)):
+        returns = day08.create_input()
+        assert returns[0] == string
+        assert len(returns[0]) == length
 
 
-# @pytest.mark.parametrize(
-#     's, op, X, Y, Z', [
-#         ('123 -> x', 'ASSIGN', '123', None, 'x'),  
-#         ('456 -> y', 'ASSIGN', '456', None, 'y'),  
-#         ('x AND y -> d', 'AND', 'x', 'y', 'd'),  
-#         ('x OR y -> e', 'OR', 'x', 'y', 'e'),  
-#         ('x LSHIFT 2 -> f', 'LSHIFT', 'x', '2', 'f'),  
-#         ('y RSHIFT 2 -> g', 'RSHIFT', 'y', '2', 'g'),  
-#         ('NOT x -> h', 'NOT', 'x', None, 'h'),  
-#         ('NOT y -> i', 'NOT', 'y', None, 'i'),  
-#         ('gk AND gq -> gs', 'AND', 'gk', 'gq', 'gs'),  
-#         ('1 AND gd -> ge', 'AND', '1', 'gd', 'ge'),  
-#         ('NOT y -> i', 'NOT', 'y', None, 'i'),  
-#         ('NOT y -> i', 'NOT', 'y', None, 'i'),  
-#         ('NOT y -> i', 'NOT', 'y', None, 'i'),  
-#     ]
-# )
-# def test_create_input(s, op, X, Y, Z):
-#     with patch('builtins.open', mock_open(read_data=s)):
-#         returns = day08.create_input()
-#         assert returns[Z] == [op, X, Y]
+@pytest.mark.parametrize(
+    'str_in, str_out', [
+        (r'""', ''),  
+        (r'"abc"', 'abc'),  
+        (r'"aaa\"aaa"', 'aaa#aaa'),  
+        (r'"\x27"', '#'),  
+    ]
+)
+def test_evaluate_string(str_in, str_out):
+    assert day08.evaluate_string(str_in) == str_out
 
+
+@pytest.mark.parametrize(
+    'str_in, str_out, length', [
+        (r'""', '"#"#""', 6),  
+        (r'"abc"', '"#"abc#""', 9),  
+        (r'"aaa\"aaa"', '"#"aaa###"aaa#""', 16),  
+        (r'"\x27"', '"#"######""', 11),  
+    ]
+)
+def test_encode_strings(str_in, str_out, length):
+    assert day08.encode_string(str_in) == str_out
+    assert len(day08.encode_string(str_in)) == length
