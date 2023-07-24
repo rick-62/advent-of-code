@@ -1,44 +1,16 @@
 from unittest.mock import mock_open, patch
 
 import pytest
-from solutions import day08
+from solutions import day09
 
 
 @pytest.mark.parametrize(
-    'string, length', [
-        (r'""', 2),  
-        (r'"abc"', 5),  
-        (r'"aaa\"aaa"', 10),  
-        (r'"\x27"', 6),  
+    'line, start, end, distance', [
+        ('London to Dublin = 464', 'London', 'Dublin', 464),  
+        ('London to Belfast = 518', 'London', 'Belfast', 518),  
+        ('Dublin to Belfast = 141', 'Dublin', 'Belfast', 141),  
     ]
 )
-def test_create_input(string, length):
-    with patch('builtins.open', mock_open(read_data=string)):
-        returns = day08.create_input()
-        assert returns[0] == string
-        assert len(returns[0]) == length
-
-
-@pytest.mark.parametrize(
-    'str_in, str_out', [
-        (r'""', ''),  
-        (r'"abc"', 'abc'),  
-        (r'"aaa\"aaa"', 'aaa#aaa'),  
-        (r'"\x27"', '#'),  
-    ]
-)
-def test_evaluate_string(str_in, str_out):
-    assert day08.evaluate_string(str_in) == str_out
-
-
-@pytest.mark.parametrize(
-    'str_in, str_out, length', [
-        (r'""', '"#"#""', 6),  
-        (r'"abc"', '"#"abc#""', 9),  
-        (r'"aaa\"aaa"', '"#"aaa###"aaa#""', 16),  
-        (r'"\x27"', '"#"######""', 11),  
-    ]
-)
-def test_encode_strings(str_in, str_out, length):
-    assert day08.encode_string(str_in) == str_out
-    assert len(day08.encode_string(str_in)) == length
+def test_create_network(line, start, end, distance):
+    graph = day09.create_network([line])
+    assert graph[start][end]['weight'] == distance
