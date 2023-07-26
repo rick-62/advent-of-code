@@ -1,4 +1,5 @@
 import re
+from itertools import product, dropwhile, islice
 
 from helper import load_input
 
@@ -9,10 +10,6 @@ def create_input():
 
 
 def is_valid_password(string):
-
-    # passwords must be exactly eight lowercase letters
-    if len(string) != 8:
-        return False
 
     # Passwords may not contain the letters i, o, or l
     if 'i' in string or 'o' in string or 'l' in string:
@@ -34,6 +31,24 @@ def is_valid_password(string):
     return True
 
 
+def new_password(old_password, length=8):
+
+    assert len(old_password) == length
+
+    chars = "abc"  # i, l and o have been removed
+
+    # def get_iteration(old_password):
+    #     num = 0
+    #     for c in old_password:
+    #         num *= 26
+    #         num += ord(c) - ord('a') + 1
+    #     return num
+
+    for string in product(chars, repeat=length):
+        if is_valid_password("".join(string)):
+            yield "".join(string)
+
+
 def part1():
     '''
     Santa's previous password expired, and he needs help choosing a new one. 
@@ -43,6 +58,12 @@ def part1():
     # Passwords may not contain the letters i, o, or l
     # Passwords must contain at least two different, non-overlapping pairs
     '''
+    valid = 0
+    for string in new_password('aaaaaaaa'):
+        print(string)
+        valid += 1
+    print(valid)
+
 
     # tempted to remake thsi using numpy
     # convert letters to ord eqivilent?
