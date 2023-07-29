@@ -1,6 +1,7 @@
 from unittest.mock import mock_open, patch
 
 import pytest
+import pytest_timeout
 from solutions import day11
 
 
@@ -25,13 +26,14 @@ def test_is_valid_password(string, valid):
     assert returns == valid
 
 
+
 @pytest.mark.parametrize(
     'old_password, new_password', [
-        # ('aabcb', 'aabcc'),  
-        # ('ghjaaaaa', 'ghjaabcc'),
-        # ('ghijklmn', 'ghjaabcc'),  
+        ('aabcb'    , 'aabcc'),  
+        ('ghjaaaaa' , 'ghjaabcc'),
+        ('ghijklmn' , 'ghjaabcc'),  
     ]
 )
-def test_new_password(old_password, new_password):
-    returns = day11.new_password(old_password, length=len(old_password))
+def test_get_next_password(old_password, new_password):
+    returns = day11.get_next_password(old_password)
     assert next(returns) == new_password

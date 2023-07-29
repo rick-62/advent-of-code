@@ -2,3 +2,4 @@ pytest
 pytest-xdist
 numpy
 networkx
+pytest-timeout

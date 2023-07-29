@@ -1,5 +1,4 @@
 import re
-from itertools import product, dropwhile, islice
 
 from helper import load_input
 
@@ -10,16 +9,20 @@ def create_input():
 
 
 def is_valid_password(string):
+    '''
+    Checks validity of password, returning True/False.
 
-    # Passwords may not contain the letters i, o, or l
-    if 'i' in string or 'o' in string or 'l' in string:
-        return False
+    Validity checks:
+    1. increasing straight of at least three letters
+    2. two different, non-overlapping pairs
+    '''
 
     # Passwords must include one increasing straight of at least three letters
     straight = 0
     for i in range(len(string) - 2):
         if ord(string[i]) == ord(string[i+1]) - 1 == ord(string[i+2]) - 2:
             straight += 1
+            break
     if straight == 0:
         return False
 
@@ -31,46 +34,65 @@ def is_valid_password(string):
     return True
 
 
-def new_password(old_password, length=8):
+def get_next_password(old_password):
+    '''Given the old password, increments through valid passwords, yielding the next'''
 
-    assert len(old_password) == length
+    chars = "abcdefghjkmnopqrstuvwxyz"  # non-valid characters i, l and o have been removed
 
-    chars = "abc"  # i, l and o have been removed
+    # converts the old password if contains any non-valid characters
+    for i, char in enumerate(old_password):
+        if char in 'iol':
+            old_password = (
+                old_password[:i] + 
+                chr(ord(old_password[i]) + 1) + 
+                'a'*len(old_password[i+1:])
+            )
+            break
 
-    # def get_iteration(old_password):
-    #     num = 0
-    #     for c in old_password:
-    #         num *= 26
-    #         num += ord(c) - ord('a') + 1
-    #     return num
 
-    for string in product(chars, repeat=length):
-        if is_valid_password("".join(string)):
-            yield "".join(string)
+    def increment_string(string):
+        '''Yields incremented string, based on chars'''
+
+        while True:
+
+            # loops through the string index in reverse (7 -> 0)
+            for i in range(len(string)-1, -1, -1):
+
+                # if character is 'z' then resets to 'a' and loops to next element in list
+                if string[i] == 'z':
+                    string = string[:i] + 'a' + string[i+1:]
+                
+                # if character not 'z' then increments to the next character and breaks loop
+                else:
+                    string = string[:i] + chars[chars.find(string[i]) + 1] + string[i+1:]
+                    break
+            
+            yield string
+
+
+    # loops through strings and yields result if valid
+    for string in increment_string(old_password):
+        if is_valid_password(string):
+            yield string
 
 
 def part1():
     '''
-    Santa's previous password expired, and he needs help choosing a new one. 
+    Santa's previous password expired, and he needs help choosing the next one. 
     He finds his new password by incrementing his old password string repeatedly until it is valid.
-    # passwords must be exactly eight lowercase letters
-    # Passwords must include one increasing straight of at least three letters
-    # Passwords may not contain the letters i, o, or l
-    # Passwords must contain at least two different, non-overlapping pairs
+        # passwords must be exactly eight lowercase letters
+        # Passwords must include one increasing straight of at least three letters
+        # Passwords may not contain the letters i, o, or l
+        # Passwords must contain at least two different, non-overlapping pairs
     '''
-    valid = 0
-    for string in new_password('aaaaaaaa'):
-        print(string)
-        valid += 1
-    print(valid)
+    old_password = create_input()
+    pw = get_next_password(old_password)
+    return next(pw)
 
-
-    # tempted to remake thsi using numpy
-    # convert letters to ord eqivilent?
-    # Or not and jst need to increment through passwords
 
 def part2():
-    ...
+    '''Simply yields the next valid password after part 1'''
+    return next(get_next_password(part1()))
 
 
 if __name__ == '__main__':
