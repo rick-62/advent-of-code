@@ -30,17 +30,16 @@ def test_sum_digits(string, output):
 
 
 @pytest.mark.parametrize(
-    'string, output', [
-        ('[1,2,3]', 0),  
-        ('[1,{"c":"red","b":2},3]', 2),  
-        ('{"d":"red","e":[1,2,3,4],"f":5}', 15),  
-        ('[1,"red",5]', 0),
-        ('{"a": 45, {"b":"red"}}', 0),
-        ('{"a": 45, {"b":"red", {"b": 42}}}', 42),
-        ('{"a":45,{"b": {"b":42},{"f":"red"}}}}}', 0),
-        ('{"a":45,{"b":{"c":42},"b":"red","c":{"d":{"e":1}}}}', 43),
+    'string, expected', [
+        ([1,2,3], []),  
+        ([1,{"c":"red","b":2},3], [{"c":"red","b":2}]),  
+        ({"d":"red","e":[1,2,3,4],"f":5}, [{"d":"red","e":[1,2,3,4],"f":5}]),  
+        ([1,"red",5], []),
+        ({"a": 45,"c":{"b":"red"}}, [{"b":"red"}]),
+        ({"a":45,"d":{"b": {"b":42},"c":{"f":"red"}}}, [{"f":"red"}]),
+        ({"a":45,"d":{"b":{"c":42},"b":"red","c":{"d":{"e":1}}}}, [{"b":{"c":42},"b":"red","c":{"d":{"e":1}}}]),
     ]
 )
-def test_sum_digits(string, output):
-    returns = day12.sum_digits_where_red(string)
-    assert returns == output
+def test_find_red_objects(string, expected):
+    results = day12.find_red(string)
+    assert results == expected

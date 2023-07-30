@@ -1,3 +1,4 @@
+import json
 import re
 
 from helper import load_input
@@ -14,19 +15,46 @@ def sum_digits(text: str):
     return sum([int(d) for d in digits])
 
 
+def find_red(obj: dict):
+    '''traverses json dictionary to identify all objects containing the property red'''
+
+    results = []
+
+    if isinstance(obj, dict):
+
+        # if contains value of red in dict object, returns object
+        if "red" in obj.values():
+            results.append(obj)
+
+        # else loops through all object values to find_red
+        else:
+            for value in obj.values():
+                results.extend(find_red(value))
+
+    # for lists we loop through items to find_red
+    elif isinstance(obj, list):
+            for item in obj:
+                results.extend(find_red(item))
+    
+    # finally removing any empty & null value and returning the results
+    return [red for red in results if red]
+
+
 def sum_digits_where_red(text: str):
     '''
     Extracts and sums all the digits from a string of text, 
     but only where the digit has any property with the value "red".
     This only for objects ({...}), not arrays ([...]).
     '''
-    red_objects = re.findall(r'{[^{]*:"red"[^}]*}', text)
 
-    total = 0
-    for obj in red_objects:
-        total += sum_digits(obj)
+    # converts text to json
+    data = json.loads(text)
 
-    return total
+    # returns list of all objects (& children) containing property "red" 
+    results = find_red(data)
+
+    # converts list of objects to string and sums digits
+    return sum_digits(str(results))
 
 
 def part1():
