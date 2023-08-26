@@ -9,7 +9,7 @@ from solutions import day18
 @pytest.mark.parametrize(
     'example_input, expected_outcome', [(
         '''#.#\n..#\n...''',
-        np.array([['#','.','#'], ['.','.','#'], ['.','.','.']])
+        np.array([[1,0,1], [0,0,1], [0,0,0]])
     )]
 )
 def test_create_input(example_input, expected_outcome):
