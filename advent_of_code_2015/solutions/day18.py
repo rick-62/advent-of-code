@@ -21,7 +21,6 @@ def create_input():
 
 
 def animate_lights(arr: np.array) -> np.array:
-    import numpy as np
 
     # Pad the array with zeros
     padded = np.pad(arr, pad_width=1, mode='constant', constant_values=0)
@@ -33,20 +32,18 @@ def animate_lights(arr: np.array) -> np.array:
     result = np.zeros_like(arr)
 
     # Loop through the array
-    for i in range(arr.shape[0]):
-        for j in range(arr.shape[1]):
-            # Get the 3x3 window around the current element
-            window = padded[i:i+window_size, j:j+window_size]
-            # Sum the window elements and subtract the current element
-            neighbors = np.sum(window) - arr[i,j]
-            # Light remains on if number of lit neighbors is 2 or 3
-            if arr[i,j] == 1 and neighbors in [2, 3]:
-                result[i,j] = 1
-            # Light turns on if number of lit neighbors is exactly 3
-            elif arr[i,j] == 0 and neighbors == 3:
-                result[i,j] = 1
+    for (i, j), x in np.ndenumerate(arr):
+        # Get the 3x3 window around the current element
+        window = padded[i:i+window_size, j:j+window_size]
+        # Sum the window elements and subtract the current element
+        neighbors = np.sum(window) - arr[i,j]
+        # Light remains on if number of lit neighbors is 2 or 3
+        if arr[i,j] == 1 and neighbors in [2, 3]:
+            result[i,j] = 1
+        # Light turns on if number of lit neighbors is exactly 3
+        elif arr[i,j] == 0 and neighbors == 3:
+            result[i,j] = 1
 
-    # Returns the result
     return result
 
 
@@ -61,9 +58,24 @@ def part1():
 
     return np.sum(arr)
 
+
 def part2():
+    '''
+    In your grid of 100x100 lights, given your initial configuration, 
+    but with the four corners always in the on state, 
+    how many lights are on after 100 steps?
+    '''
+    arr = create_input()
     
-    ...
+    for i in range(100):
+        # sets each corner light to on for each iteration
+        arr[0,0], arr[0,-1], arr[-1,0], arr[-1,-1] = 1, 1, 1, 1
+        arr = animate_lights(arr)
+
+    # ensures each corner light is set to on before summing 
+    arr[0,0], arr[0,-1], arr[-1,0], arr[-1,-1] = 1, 1, 1, 1
+    
+    return np.sum(arr)
 
 
 if __name__ == '__main__':
